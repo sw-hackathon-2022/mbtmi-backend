@@ -112,12 +112,16 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": env("DB_NAME"),
+        "USER": env("DB_USER"),
+        "PASSWORD": env("DB_PASSWORD"),
+        "HOST": env("DB_HOST_NAME"),
+        "PORT": int(env("DB_PORT")),
+        "TZ": env("TZ"),
+        "OPTIONS": {"init_command": 'SET sql_mode="STRICT_TRANS_TABLES"'},
     }
 }
 
@@ -204,27 +208,12 @@ REST_FRAMEWORK = {
 
 # oauth
 KAKAO_REST_API_KEY = env("OAUTH_KAKAO_CLIENT_ID")
-KAKAO_SECRET = env("OAUTH_NAVER_SECRET")
-KAKAO_REDIRECT_URL = '/users/login/callback'
+KAKAO_SECRET = env("OAUTH_KAKAO_SECRET")
+KAKAO_REDIRECT_URL = 'http://localhost/users/login/callback/'
+KAKAO_LOGIN_REDIRECT_URL = 'http://localhost/'
 
 SOCIALACCOUNT_ADAPTER = "users.adapter.UserAdapter"
 SOCIALACCOUNT_PROVIDERS = {
-    "google": {
-        "APP": {
-            "client_id": env("OAUTH_GOOGLE_CLIENT_ID"),
-            "secret": env("OAUTH_GOOGLE_SECRET"),
-            "key": env("OAUTH_GOOGLE_API_KEY"),
-        },
-        "SCOPE": [
-            "https://www.googleapis.com/auth/userinfo.email",
-            "https://www.googleapis.com/auth/userinfo.profile",
-            "https://www.googleapis.com/auth/user.birthday.read",
-            "https://www.googleapis.com/auth/user.phonenumbers.read",
-        ],
-        "UTH_PARAMS": {
-            "access_type": "online",
-        },
-    },
     "kakao": {
         "APP": {
             "client_id": KAKAO_REST_API_KEY,
@@ -248,11 +237,11 @@ SIMPLE_JWT = {
 }
 USER_ID_FIELD = "username"
 
-REST_AUTH_SERIALIZERS = {
-    "LOGIN_SERIALIZER": "users.serializers.UserLoginSerializer",
-    "REGISTER_SERIALIZER": "users.serializers.UserSignUpSerializer",
-    "USER_DETAILS_SERIALIZER": "users.serializers.OAuthLoginUserSerializer",
-}
+# REST_AUTH_SERIALIZERS = {
+#     "LOGIN_SERIALIZER": "users.serializers.UserLoginSerializer",
+#     "REGISTER_SERIALIZER": "users.serializers.UserSignUpSerializer",
+#     "USER_DETAILS_SERIALIZER": "users.serializers.OAuthLoginUserSerializer",
+# }
 
 AUTHENTICATION_BACKENDS = {
     "django.contrib.auth.backends.ModelBackend",
@@ -294,3 +283,7 @@ AUTH_USER_MODEL = "users.User"
 # SSL settings
 CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_SECURE = True
+
+# base host & port
+API_HOST = env("API_HOST")
+API_PORT = env("API_PORT")
