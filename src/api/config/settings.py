@@ -287,3 +287,10 @@ SPECTACULAR_SETTINGS = {
     },
     "DISABLE_ERRORS_AND_WARNINGS": True,
 }
+
+# user model
+AUTH_USER_MODEL = "users.User"
+
+# SSL settings
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = True
