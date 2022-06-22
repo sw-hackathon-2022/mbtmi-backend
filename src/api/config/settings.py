@@ -11,16 +11,24 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+import os.path
+
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent  # api
+SRC_DIR = BASE_DIR.parent
+
+# environment file
+env = environ.Env(DEBUG=(bool, True))
+environ.Env.read_env(env_file=os.path.join(SRC_DIR, ".env"))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-9tof@@@7#8gy=4e%$6p7!3yppf0-*)=y-uk=zvlpm_60%gf^)0'
+SECRET_KEY = 'django-insecure-@!t*yer)=#++p0*u!+=k)zgkrjyc80kkj$r%ilgr8-c1vwq^^s'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -29,6 +37,13 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
+MBTMI_APPS = [
+    "posts",
+    "comments",
+    "reactions",
+    "reports",
+    "surveys",
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -37,7 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-]
+] + MBTMI_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -99,6 +114,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# user model
+# AUTH_USER_MODEL = "users.User"
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
