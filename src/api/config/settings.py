@@ -54,8 +54,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-# django-rest-framework
+    'django.contrib.sites',
+    # django-rest-framework
     "rest_framework",
     "rest_framework.authtoken",
     # api documentation
@@ -69,8 +69,7 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    "allauth.socialaccount.providers.naver",
-    "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.kakao",
     # cors
     "corsheaders",
     # useful extentions
@@ -203,9 +202,44 @@ REST_FRAMEWORK = {
     "TIME_FORMAT": TIME_FORMAT,
 }
 
+# oauth
+KAKAO_REST_API_KEY = env("OAUTH_KAKAO_CLIENT_ID")
+KAKAO_SECRET = env("OAUTH_NAVER_SECRET")
+KAKAO_REDIRECT_URL = '/users/login/callback'
+
+SOCIALACCOUNT_ADAPTER = "users.adapter.UserAdapter"
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "APP": {
+            "client_id": env("OAUTH_GOOGLE_CLIENT_ID"),
+            "secret": env("OAUTH_GOOGLE_SECRET"),
+            "key": env("OAUTH_GOOGLE_API_KEY"),
+        },
+        "SCOPE": [
+            "https://www.googleapis.com/auth/userinfo.email",
+            "https://www.googleapis.com/auth/userinfo.profile",
+            "https://www.googleapis.com/auth/user.birthday.read",
+            "https://www.googleapis.com/auth/user.phonenumbers.read",
+        ],
+        "UTH_PARAMS": {
+            "access_type": "online",
+        },
+    },
+    "kakao": {
+        "APP": {
+            "client_id": KAKAO_REST_API_KEY,
+            'redirect_uri': KAKAO_REDIRECT_URL,
+            'response_type': 'code',
+            "secret": KAKAO_SECRET,
+        },
+        "SCOPE": ["profile_nickname", "account_email"],
+    },
+}
+
 
 # jwt
 REST_USE_JWT = True
+
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=72),
     "REFRESH_TOKEN_LIFETIME": timedelta(hours=144),
@@ -223,4 +257,33 @@ REST_AUTH_SERIALIZERS = {
 AUTHENTICATION_BACKENDS = {
     "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
+}
+
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "엠비티엠아이 API",
+    "DESCRIPTION": "SW중심대학 해커톤 2022",
+    "CONTACT": {
+        "name": "팀 뫄뫄",
+        "url": "https://github.com/sw-hackathon-2022/mbtmi-backend",
+        "email": "sw.hcak.2022@gmail.com",
+    },
+    "VERSION": "0.1.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SERVE_PERMISSIONS": ["rest_framework.permissions.AllowAny"],
+    "SERVE_AUTHENTICATION": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
+    "CAMELIZE_NAMES": True,
+    "ENABLE_DJANGO_DEPLOY_CHECK": True,
+    # TODO
+    "SERVERS": [
+        {"url": "http://localhost/", "description": "Local server"},
+        {"url": "https://development.server.link.todo/", "description": "Development server"},
+    ],
+    "SWAGGER_UI_SETTINGS": {
+        "dom_id": "#swagger-ui",  # required(default)
+        "layout": "BaseLayout",  # required(default)
+    },
+    "DISABLE_ERRORS_AND_WARNINGS": True,
 }
