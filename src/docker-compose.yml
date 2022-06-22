@@ -1,0 +1,64 @@
+# docker-compose -f docker-compose.yml --env-file .env up --build -d --force-recreate
+
+version : '3'
+services:
+  # Database
+  db:
+    container_name: mariadb
+    image: mariadb:latest
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+    volumes:
+      - ./db/data:/var/lib/mysql
+      - ./db/conf.d:/etc/mysql/conf.d
+    environment:
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_USER=${DB_ROOT_USER}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - TZ=${TZ}
+  # WAS
+  api:
+    container_name: api
+    image: api
+    build:
+      context: .
+      dockerfile : api/Dockerfile
+      args:
+        SRC: ${SRC}
+        API: ${API}
+        STATIC: /src/static
+    command: sh -c "python manage.py makemigrations --no-input &&
+                    python manage.py migrate &&
+                    python manage.py collectstatic --no-input &&
+                    gunicorn config.wsgi:application --bind 0.0.0.0:${API_PORT}"
+    volumes:
+      - ./api:/src/api
+      - .env:/src/.env
+      - ./static:/src/static
+    ports:
+      - "${API_PORT}:${API_PORT}"
+    expose:
+      - "${API_PORT}"
+    env_file: .env
+    depends_on:
+      - db
+  # Reverse Proxy
+  nginx:
+    container_name: nginx
+    image: nginx:stable
+    volumes:
+      - ./nginx:/etc/nginx/templates
+      - ./static:/src/static
+      - ./media:/src/media
+    environment:
+      - API_DOCKERNAME=api
+      - API_HOST=${API_HOST}
+      - API_PORT=${API_PORT}
+      - STATIC=/src/static
+      - MEDIA=/src/media
+    ports:
+      - "80:80" # http
+    depends_on:
+      - api
