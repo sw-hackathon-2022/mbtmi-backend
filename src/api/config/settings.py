@@ -43,6 +43,7 @@ MBTMI_APPS = [
     "reactions",
     "reports",
     "surveys",
+    "users"
 ]
 
 INSTALLED_APPS = [
