@@ -1,8 +1,6 @@
-from django.shortcuts import render
-from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
 from rest_framework import viewsets
-from rest_framework.generics import RetrieveAPIView
+from rest_framework.response import Response
 
 from posts.filters import PostByMBTIFilterBackend
 from posts.models import Post
@@ -33,6 +31,11 @@ from posts.serializers import PostSerializer, PostDetailSerializer
         operation_id="게시글 삭제",
         description="게시글 삭제",
     ),
+    retrieve=extend_schema(
+        tags=["/posts"],
+        operation_id="게시글 상세 조회",
+        description="게시글 정보 / 반응 정보(반응수, 반응 여부) 조회",
+    )
 )
 class PostModelViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.select_related("author").all()
@@ -41,7 +44,7 @@ class PostModelViewSet(viewsets.ModelViewSet):
         "get",
         "post",
         "put",
-        "delete"
+        "delete",
     ]
     lookup_field = "id"
     lookup_url_kwarg = "post_id"
@@ -50,14 +53,7 @@ class PostModelViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-
-@extend_schema(
-    tags=["/posts"],
-    operation_id="게시글 상세 조회",
-    description="게시글 정보 / 반응 정보(반응수, 반응 여부) 조회",
-)
-class PostDetailView(RetrieveAPIView):
-    queryset = Post.objects.select_related("author").all()
-    serializer_class = PostDetailSerializer
-    http_method_names = ["get"]
-    lookup_field = "id"
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = PostDetailSerializer(instance, data=request.data)
+        return Response(serializer.data)

@@ -37,6 +37,7 @@ class PostSerializer(serializers.ModelSerializer):
 
 class PostDetailSerializer(serializers.ModelSerializer):
     comments = SerializerMethodField()
+    author = UserSerializer()
     like = SerializerMethodField()
     unlike = SerializerMethodField()
 
@@ -70,8 +71,10 @@ class PostDetailSerializer(serializers.ModelSerializer):
                                      "request": self.context.get("request")
                                  }).data
 
+    @extend_schema_field(PostLikeSerializer)
     def get_like(self, obj: Post):
         return PostLikeSerializer(obj, context={"request": self.context.get("request")}).data
 
+    @extend_schema_field(PostUnlikeSerializer)
     def get_unlike(self, obj: Post):
         return PostUnlikeSerializer(obj, context={"request": self.context.get("request")}).data

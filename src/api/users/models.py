@@ -91,7 +91,7 @@ class User(AbstractBaseUser):
         db_table = "user"
 
     def __str__(self):
-        return f"{self.username}"
+        return f"[#{self.id}] {self.username}"
 
     @property
     def is_staff(self):
@@ -104,3 +104,6 @@ class User(AbstractBaseUser):
     def has_module_perms(self, app_label):
         """Always has module perms"""
         return True
+
+    def get_shortten_username(self):
+        return self.username[-4:]
