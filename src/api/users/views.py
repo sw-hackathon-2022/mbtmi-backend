@@ -2,7 +2,9 @@ import time
 
 from allauth.socialaccount.providers.kakao.views import KakaoOAuth2Adapter
 from django.shortcuts import redirect
+from drf_spectacular.utils import extend_schema
 from requests.adapters import HTTPAdapter
+from rest_framework.generics import UpdateAPIView, get_object_or_404
 from urllib3 import Retry
 
 from users.models import User
@@ -14,6 +16,7 @@ from django.http import JsonResponse
 import requests
 from rest_framework import status
 
+from users.serializers import ProfileSerializer
 
 BASE_URL = f"http://{settings.API_HOST}:80"
 
@@ -96,3 +99,21 @@ class KakaoLogin(SocialLoginView):
     adapter_class = KakaoOAuth2Adapter
     client_class = OAuth2Client
     callback_url = settings.KAKAO_REDIRECT_URL
+
+
+@extend_schema(
+    tags=["/users"],
+    operation_id="프로필 등록",
+)
+class ProfileUpdateView(UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = ProfileSerializer
+    http_method_names = "patch"
+
+    def get_object(self):
+        """Get request user"""
+        # Get login user
+        obj = get_object_or_404(self.get_queryset(), id=self.request.user.id)
+        # May raise a permission denied
+        self.check_object_permissions(self.request, obj)
+        return obj
