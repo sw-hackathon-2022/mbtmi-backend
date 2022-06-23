@@ -68,7 +68,8 @@ class User(AbstractBaseUser):
         null=True,
         blank=True,
     )
-    username = models.BigIntegerField(
+    username = models.CharField(
+        max_length=10,
         unique=True,
     )
     password = models.CharField(
@@ -96,4 +97,4 @@ class User(AbstractBaseUser):
 
     @property
     def is_staff(self):
-       return self.is_admin
+        return self.is_admin
