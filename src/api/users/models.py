@@ -96,3 +96,11 @@ class User(AbstractBaseUser):
     @property
     def is_staff(self):
         return self.is_admin
+
+    def has_perm(self, perm, obj=None):
+        """Always has perms"""
+        return True
+
+    def has_module_perms(self, app_label):
+        """Always has module perms"""
+        return True
