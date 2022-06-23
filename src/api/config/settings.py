@@ -273,6 +273,9 @@ SPECTACULAR_SETTINGS = {
     "SWAGGER_UI_SETTINGS": {
         "dom_id": "#swagger-ui",  # required(default)
         "layout": "BaseLayout",  # required(default)
+        'persistAuthorization': True,
+        'displayOperationId': True,
+        'filter': True,
     },
     "DISABLE_ERRORS_AND_WARNINGS": True,
 }

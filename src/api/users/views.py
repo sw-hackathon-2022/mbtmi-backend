@@ -161,7 +161,7 @@ class KakaoLogin(SocialLoginView):
 class ProfileUpdateView(UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = ProfileSerializer
-    http_method_names = "patch"
+    http_method_names = ["patch"]
 
     def get_object(self):
         """Get request user"""
