@@ -1,6 +1,5 @@
 from django.db import models
 
-# Create your models here.
 from django.utils import timezone
 
 from posts.models import Post
@@ -24,7 +23,7 @@ class BaseReaction(models.Model):
         abstract = True
 
 
-class Like(BaseException):
+class Like(BaseReaction):
     class Meta:
         db_table = "like"
 
@@ -32,7 +31,7 @@ class Like(BaseException):
         return f"{self.user}님이 {self.post}에 공감합니다."
 
 
-class Unlike(BaseException):
+class Unlike(BaseReaction):
     class Meta:
         db_table = "unlike"
 

@@ -7,8 +7,6 @@ class UserManager(BaseUserManager):
     use_in_migrations = True
 
     def create_user(self, username, about, mbti="XXXX", password=None, email=None):
-        if type(username) != int:
-            raise ValueError("숫자 형식의 username이어야 합니다.")
         user = self.model(
             mbti=mbti,
             username=int(username),
@@ -20,7 +18,7 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, about, mbti="XXXX", password=None, email=None):
+    def create_superuser(self, username, about=None, mbti="XXXX", password=None, email=None):
         user = self.create_user(
             mbti=mbti,
             username=username,
@@ -73,7 +71,7 @@ class User(AbstractBaseUser):
         unique=True,
     )
     password = models.CharField(
-        max_length=50,
+        max_length=128,
         null=True,
         blank=True,
     )
