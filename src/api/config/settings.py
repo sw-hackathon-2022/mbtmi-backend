@@ -207,12 +207,13 @@ REST_FRAMEWORK = {
 }
 
 # oauth
+SOCIALACCOUNT_ADAPTER = "users.adapter.UserAdapter"
+
 KAKAO_REST_API_KEY = env("OAUTH_KAKAO_CLIENT_ID")
 KAKAO_SECRET = env("OAUTH_KAKAO_SECRET")
 KAKAO_REDIRECT_URL = 'http://localhost/users/login/callback/'
 KAKAO_LOGIN_REDIRECT_URL = 'http://localhost/'
 
-SOCIALACCOUNT_ADAPTER = "users.adapter.UserAdapter"
 SOCIALACCOUNT_PROVIDERS = {
     "kakao": {
         "APP": {
@@ -224,7 +225,6 @@ SOCIALACCOUNT_PROVIDERS = {
         "SCOPE": ["profile_nickname", "account_email"],
     },
 }
-
 
 # jwt
 REST_USE_JWT = True
@@ -263,7 +263,7 @@ SPECTACULAR_SETTINGS = {
     "SERVE_AUTHENTICATION": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
-    "CAMELIZE_NAMES": True,
+    "CAMELIZE_NAMES": False,
     "ENABLE_DJANGO_DEPLOY_CHECK": True,
     # TODO
     "SERVERS": [
@@ -282,7 +282,7 @@ AUTH_USER_MODEL = "users.User"
 
 # SSL settings
 CSRF_COOKIE_SECURE = False
-SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = False
 
 # base host & port
 API_HOST = env("API_HOST")
