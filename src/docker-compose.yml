@@ -28,7 +28,7 @@ services:
       args:
         SRC: ${SRC}
         API: ${API}
-        STATIC: /src/static
+        STATIC: /src/api/static
     command: sh -c "python manage.py makemigrations --no-input &&
                     python manage.py migrate &&
                     python manage.py collectstatic --no-input &&
@@ -37,7 +37,6 @@ services:
     volumes:
       - ./api:/src/api
       - .env:/src/.env
-      - ./static:/src/static
     ports:
       - "${API_PORT}:${API_PORT}"
     expose:
@@ -51,14 +50,14 @@ services:
     image: nginx:stable
     volumes:
       - ./nginx:/etc/nginx/templates
-      - ./static:/src/static
-      - ./media:/src/media
+      - ./api/static:/src/api/static
+      - ./api/media:/src/api/media
     environment:
       - API_DOCKERNAME=api
       - API_HOST=${API_HOST}
       - API_PORT=${API_PORT}
-      - STATIC=/src/static
-      - MEDIA=/src/media
+      - STATIC=/src/api/static
+      - MEDIA=/src/api/media
     ports:
       - "80:80" # http
     depends_on:
