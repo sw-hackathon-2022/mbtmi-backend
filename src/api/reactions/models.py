@@ -21,6 +21,7 @@ class BaseReaction(models.Model):
 
     class Meta:
         abstract = True
+        unique_together = ("user", "post",)
 
 
 class Like(BaseReaction):
