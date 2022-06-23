@@ -7,8 +7,7 @@
 *.pyc
 __pycache__/
 local_settings.py
-src/db/
-db/
+src/db/data
 db.sqlite3
 db.sqlite3-journal
 media
