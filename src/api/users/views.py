@@ -1,16 +1,16 @@
 import time
 
 from dj_rest_auth.serializers import JWTSerializer
-from djangorestframework_camel_case.parser import CamelCaseJSONParser
-from djangorestframework_camel_case.render import CamelCaseJSONRenderer
-from drf_spectacular.utils import extend_schema, inline_serializer, OpenApiParameter, OpenApiResponse
-from rest_framework.decorators import api_view, action, permission_classes
+from drf_spectacular.utils import inline_serializer, OpenApiParameter, OpenApiResponse
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 
 import users
 from allauth.socialaccount.providers.kakao.views import KakaoOAuth2Adapter
 from django.shortcuts import redirect
+from drf_spectacular.utils import extend_schema
 from requests.adapters import HTTPAdapter
+from rest_framework.generics import UpdateAPIView, get_object_or_404
 from urllib3 import Retry
 
 from users.models import User
@@ -21,6 +21,8 @@ from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from django.http import JsonResponse
 import requests
 from rest_framework import status, serializers
+
+from users.serializers import ProfileSerializer
 
 BASE_URL = f"http://{settings.API_HOST}:8000"
 
@@ -150,3 +152,21 @@ class KakaoLogin(SocialLoginView):
     adapter_class = KakaoOAuth2Adapter
     client_class = OAuth2Client
     callback_url = settings.KAKAO_REDIRECT_URL
+
+
+@extend_schema(
+    tags=["/users"],
+    operation_id="프로필 등록",
+)
+class ProfileUpdateView(UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = ProfileSerializer
+    http_method_names = ["patch"]
+
+    def get_object(self):
+        """Get request user"""
+        # Get login user
+        obj = get_object_or_404(self.get_queryset(), id=self.request.user.id)
+        # May raise a permission denied
+        self.check_object_permissions(self.request, obj)
+        return obj
