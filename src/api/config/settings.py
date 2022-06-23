@@ -182,6 +182,9 @@ TIME_FORMAT = "%H:%M:%S"
 
 # drf settings
 REST_FRAMEWORK = {
+    # Permit only to authenticated user
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
     # camel case converter
     "DEFAULT_RENDERER_CLASSES": (
         "djangorestframework_camel_case.render.CamelCaseJSONRenderer",
@@ -198,9 +201,6 @@ REST_FRAMEWORK = {
     },
     # API document automation: drf-spectacular
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-    # Permit only to authenticated user
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
-    "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
     # time stamp format
     "DATETIME_FORMAT": DATETIME_FORMAT,
     "DATE_FORMAT": DATE_FORMAT,
@@ -267,8 +267,8 @@ SPECTACULAR_SETTINGS = {
     "ENABLE_DJANGO_DEPLOY_CHECK": True,
     # TODO
     "SERVERS": [
+        {"url": "http://49.50.166.103/", "description": "Dev server"},
         {"url": "http://localhost/", "description": "Local server"},
-        {"url": "https://development.server.link.todo/", "description": "Development server"},
     ],
     "SWAGGER_UI_SETTINGS": {
         "dom_id": "#swagger-ui",  # required(default)
@@ -304,6 +304,9 @@ CORS_ALLOW_METHODS = (
     "POST",
     "PUT",
 )
+
+CORS_ORIGIN_ALLOW_ALL = True
+
 
 CORS_ALLOW_HEADERS = [
     "accept",
