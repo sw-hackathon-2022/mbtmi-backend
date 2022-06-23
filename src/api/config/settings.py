@@ -54,8 +54,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-# django-rest-framework
+    'django.contrib.sites',
+    # django-rest-framework
     "rest_framework",
     "rest_framework.authtoken",
     # api documentation
@@ -69,8 +69,7 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    "allauth.socialaccount.providers.naver",
-    "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.kakao",
     # cors
     "corsheaders",
     # useful extentions
@@ -113,12 +112,16 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": env("DB_NAME"),
+        "USER": env("DB_USER"),
+        "PASSWORD": env("DB_PASSWORD"),
+        "HOST": env("DB_HOST_NAME"),
+        "PORT": int(env("DB_PORT")),
+        "TZ": env("TZ"),
+        "OPTIONS": {"init_command": 'SET sql_mode="STRICT_TRANS_TABLES"'},
     }
 }
 
@@ -203,9 +206,29 @@ REST_FRAMEWORK = {
     "TIME_FORMAT": TIME_FORMAT,
 }
 
+# oauth
+KAKAO_REST_API_KEY = env("OAUTH_KAKAO_CLIENT_ID")
+KAKAO_SECRET = env("OAUTH_KAKAO_SECRET")
+KAKAO_REDIRECT_URL = 'http://localhost/users/login/callback/'
+KAKAO_LOGIN_REDIRECT_URL = 'http://localhost/'
+
+SOCIALACCOUNT_ADAPTER = "users.adapter.UserAdapter"
+SOCIALACCOUNT_PROVIDERS = {
+    "kakao": {
+        "APP": {
+            "client_id": KAKAO_REST_API_KEY,
+            'redirect_uri': KAKAO_REDIRECT_URL,
+            'response_type': 'code',
+            "secret": KAKAO_SECRET,
+        },
+        "SCOPE": ["profile_nickname", "account_email"],
+    },
+}
+
 
 # jwt
 REST_USE_JWT = True
+
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=72),
     "REFRESH_TOKEN_LIFETIME": timedelta(hours=144),
@@ -214,13 +237,53 @@ SIMPLE_JWT = {
 }
 USER_ID_FIELD = "username"
 
-REST_AUTH_SERIALIZERS = {
-    "LOGIN_SERIALIZER": "users.serializers.UserLoginSerializer",
-    "REGISTER_SERIALIZER": "users.serializers.UserSignUpSerializer",
-    "USER_DETAILS_SERIALIZER": "users.serializers.OAuthLoginUserSerializer",
-}
+# REST_AUTH_SERIALIZERS = {
+#     "LOGIN_SERIALIZER": "users.serializers.UserLoginSerializer",
+#     "REGISTER_SERIALIZER": "users.serializers.UserSignUpSerializer",
+#     "USER_DETAILS_SERIALIZER": "users.serializers.OAuthLoginUserSerializer",
+# }
 
 AUTHENTICATION_BACKENDS = {
     "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
 }
+
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "엠비티엠아이 API",
+    "DESCRIPTION": "SW중심대학 해커톤 2022",
+    "CONTACT": {
+        "name": "팀 뫄뫄",
+        "url": "https://github.com/sw-hackathon-2022/mbtmi-backend",
+        "email": "sw.hcak.2022@gmail.com",
+    },
+    "VERSION": "0.1.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SERVE_PERMISSIONS": ["rest_framework.permissions.AllowAny"],
+    "SERVE_AUTHENTICATION": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
+    "CAMELIZE_NAMES": True,
+    "ENABLE_DJANGO_DEPLOY_CHECK": True,
+    # TODO
+    "SERVERS": [
+        {"url": "http://localhost/", "description": "Local server"},
+        {"url": "https://development.server.link.todo/", "description": "Development server"},
+    ],
+    "SWAGGER_UI_SETTINGS": {
+        "dom_id": "#swagger-ui",  # required(default)
+        "layout": "BaseLayout",  # required(default)
+    },
+    "DISABLE_ERRORS_AND_WARNINGS": True,
+}
+
+# user model
+AUTH_USER_MODEL = "users.User"
+
+# SSL settings
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = True
+
+# base host & port
+API_HOST = env("API_HOST")
+API_PORT = env("API_PORT")
