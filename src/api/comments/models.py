@@ -25,4 +25,4 @@ class Comment(models.Model):
         db_table = "comment"
 
     def __str__(self):
-        return f"[author#{self.author.id}] {self.post}: {self.content}"
+        return f"{self.post}: {self.content}"

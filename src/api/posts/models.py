@@ -21,4 +21,4 @@ class Post(models.Model):
         db_table = "post"
 
     def __str__(self):
-        return self.title
+        return f"{self.title}"
