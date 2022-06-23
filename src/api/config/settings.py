@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     # cors
     "corsheaders",
     # useful extentions
+    "django_filters",
     "django_extensions",
     # for debugging
     "debug_toolbar",
@@ -191,6 +192,7 @@ REST_FRAMEWORK = {
         "djangorestframework_camel_case.parser.CamelCaseFormParser",
         "djangorestframework_camel_case.parser.CamelCaseMultiPartParser",
     ),
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     "JSON_UNDERSCOREIZE": {
         "no_underscore_before_number": True,
     },
