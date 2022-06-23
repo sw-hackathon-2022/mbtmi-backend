@@ -5,7 +5,7 @@ services:
   # Database
   db:
     container_name: mariadb
-    image: mariadb:latest
+    image: mariadb:10.7
     ports:
       - "${DB_PORT}:${DB_PORT}"
     volumes:
