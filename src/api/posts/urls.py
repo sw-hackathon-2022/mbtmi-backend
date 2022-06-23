@@ -8,5 +8,5 @@ router.register(r'', PostModelViewSet)
 
 urlpatterns = [
     path("", include(router.urls), name="게시글"),
-    path("<int:post_id>/", PostDetailView.as_view({"get": "retrieve"}), name="게시글 상세 조회")
+    path("<int:post_id>/", PostDetailView.as_view(), name="게시글 상세 조회")
 ]

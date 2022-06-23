@@ -47,11 +47,14 @@ class PostModelViewSet(viewsets.ModelViewSet):
     lookup_url_kwarg = "post_id"
     filter_backends = (PostByMBTIFilterBackend,)
 
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
 
 @extend_schema(
     tags=["/posts"],
     operation_id="게시글 상세 조회",
-    description="게시글 정보/반응수, 반응여부 조회",
+    description="게시글 정보 / 반응 정보(반응수, 반응 여부) 조회",
 )
 class PostDetailView(RetrieveAPIView):
     queryset = Post.objects.select_related("author").all()
