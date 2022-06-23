@@ -7,8 +7,6 @@ class UserManager(BaseUserManager):
     use_in_migrations = True
 
     def create_user(self, username, about, mbti="XXXX", password=None, email=None):
-        if type(username) != int:
-            raise ValueError("숫자 형식의 username이어야 합니다.")
         user = self.model(
             mbti=mbti,
             username=int(username),
@@ -20,7 +18,7 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, about, mbti="XXXX", password=None, email=None):
+    def create_superuser(self, username, about=None, mbti="XXXX", password=None, email=None):
         user = self.create_user(
             mbti=mbti,
             username=username,
@@ -73,7 +71,7 @@ class User(AbstractBaseUser):
         unique=True,
     )
     password = models.CharField(
-        max_length=50,
+        max_length=128,
         null=True,
         blank=True,
     )
@@ -93,8 +91,19 @@ class User(AbstractBaseUser):
         db_table = "user"
 
     def __str__(self):
-        return f"{self.username}"
+        return f"[#{self.id}] {self.username}"
 
     @property
     def is_staff(self):
         return self.is_admin
+
+    def has_perm(self, perm, obj=None):
+        """Always has perms"""
+        return True
+
+    def has_module_perms(self, app_label):
+        """Always has module perms"""
+        return True
+
+    def get_shortten_username(self):
+        return self.username[-4:]

@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+from reactions.models import Like, Unlike
+
+admin.site.register(Like)
+admin.site.register(Unlike)

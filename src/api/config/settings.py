@@ -54,7 +54,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites',
     # django-rest-framework
     "rest_framework",
     "rest_framework.authtoken",
@@ -73,6 +72,7 @@ INSTALLED_APPS = [
     # cors
     "corsheaders",
     # useful extentions
+    "django_filters",
     "django_extensions",
     # for debugging
     "debug_toolbar",
@@ -192,6 +192,7 @@ REST_FRAMEWORK = {
         "djangorestframework_camel_case.parser.CamelCaseFormParser",
         "djangorestframework_camel_case.parser.CamelCaseMultiPartParser",
     ),
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     "JSON_UNDERSCOREIZE": {
         "no_underscore_before_number": True,
     },
@@ -237,11 +238,9 @@ SIMPLE_JWT = {
 }
 USER_ID_FIELD = "username"
 
-# REST_AUTH_SERIALIZERS = {
-#     "LOGIN_SERIALIZER": "users.serializers.UserLoginSerializer",
-#     "REGISTER_SERIALIZER": "users.serializers.UserSignUpSerializer",
-#     "USER_DETAILS_SERIALIZER": "users.serializers.OAuthLoginUserSerializer",
-# }
+REST_AUTH_SERIALIZERS = {
+    "USER_DETAILS_SERIALIZER": "users.serializers.UserDetailSerializer",
+}
 
 AUTHENTICATION_BACKENDS = {
     "django.contrib.auth.backends.ModelBackend",
@@ -290,3 +289,32 @@ SESSION_COOKIE_SECURE = False
 # base host & port
 API_HOST = env("API_HOST")
 API_PORT = env("API_PORT")
+
+
+# CORS
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_METHODS = (
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+)
+
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "host",
+    "x-real-ip",
+    "x-forwarded-for",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "location",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
