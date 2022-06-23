@@ -4,7 +4,8 @@ from dj_rest_auth.serializers import JWTSerializer
 from djangorestframework_camel_case.parser import CamelCaseJSONParser
 from djangorestframework_camel_case.render import CamelCaseJSONRenderer
 from drf_spectacular.utils import extend_schema, inline_serializer, OpenApiParameter, OpenApiResponse
-from rest_framework.decorators import api_view, action
+from rest_framework.decorators import api_view, action, permission_classes
+from rest_framework.permissions import AllowAny
 
 import users
 from allauth.socialaccount.providers.kakao.views import KakaoOAuth2Adapter
@@ -35,6 +36,7 @@ BASE_URL = f"http://{settings.API_HOST}:8000"
     },
 )
 @api_view(["GET"])
+@permission_classes([AllowAny])
 def kakao_login(request):
     rest_api_key = getattr(settings, 'KAKAO_REST_API_KEY')
     return redirect(
@@ -63,6 +65,7 @@ def kakao_login(request):
     },
 )
 @api_view(["GET"])
+@permission_classes([AllowAny])
 def kakao_callback(request):
     rest_api_key = settings.KAKAO_REST_API_KEY
     code = request.GET.get("code")
