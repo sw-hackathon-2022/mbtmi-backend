@@ -51,3 +51,21 @@ class PostReportSerializer(serializers.Serializer):
     def create(self, validated_data):
         pass
 
+
+class PostReactionCountSerializer(serializers.Serializer):
+    def update(self, instance, validated_data):
+        pass
+
+    def create(self, validated_data):
+        pass
+
+    like_count = SerializerMethodField()
+    unlike_count = SerializerMethodField()
+
+    @extend_schema_field(serializers.IntegerField)
+    def get_like_count(self, obj: Post):
+        return obj.like_set.count()
+
+    @extend_schema_field(serializers.IntegerField)
+    def get_unlike_count(self, obj: Post):
+        return obj.unlike_set.count()
