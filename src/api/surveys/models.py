@@ -60,6 +60,7 @@ class SurveyReply(models.Model):
 
     class Meta:
         db_table = "survey_reply"
+        unique_together = ("replier", "item")
 
     def __str__(self):
         return f"{self.replier}님의 {self.item} 응답"
