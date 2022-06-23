@@ -50,10 +50,15 @@ class PostModelViewSet(viewsets.ModelViewSet):
     lookup_url_kwarg = "post_id"
     filter_backends = (PostByMBTIFilterBackend,)
 
+    def get_detail_serializer(self, *args, **kwargs):
+        serializer_class = PostDetailSerializer
+        kwargs.setdefault('context', self.get_serializer_context())
+        return serializer_class(*args, **kwargs)
+
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = PostDetailSerializer(instance, data=request.data)
+        serializer = self.get_detail_serializer(instance)
         return Response(serializer.data)

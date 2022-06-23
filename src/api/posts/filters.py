@@ -7,7 +7,7 @@ from posts.models import Post
 
 class PostByMBTIFilterBackend(filters.BaseFilterBackend):
     def filter_queryset(self, request: Request, queryset, view):
-        if request.method == "GET":
+        if request.method == "GET" and request.query_params:
             mbti_query_string = request.query_params.get("mbti", None)
             if mbti_query_string is None:
                 return Post.objects.none()
