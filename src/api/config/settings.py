@@ -212,8 +212,9 @@ SOCIALACCOUNT_ADAPTER = "users.adapter.UserAdapter"
 
 KAKAO_REST_API_KEY = env("OAUTH_KAKAO_CLIENT_ID")
 KAKAO_SECRET = env("OAUTH_KAKAO_SECRET")
-KAKAO_REDIRECT_URL = 'http://localhost/users/login/callback/'
-KAKAO_LOGIN_REDIRECT_URL = 'http://localhost/'
+KAKAO_REDIRECT_URL = f'http://{env("API_HOST")}:{env("NGINX_PORT")}/users/login/callback/'
+KAKAO_LOGIN_REDIRECT_URL = f'http://{env("API_HOST")}:{env("NGINX_PORT")}/'
+KAKAO_FINISH_URL = f'http://{env("API_HOST")}:{env("NGINX_PORT")}/users/login/finish/'
 
 SOCIALACCOUNT_PROVIDERS = {
     "kakao": {
@@ -289,6 +290,7 @@ SESSION_COOKIE_SECURE = False
 # base host & port
 API_HOST = env("API_HOST")
 API_PORT = env("API_PORT")
+NGINX_PORT = env("NGINX_PORT")
 
 
 # CORS

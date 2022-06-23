@@ -24,8 +24,6 @@ from rest_framework import status, serializers
 
 from users.serializers import ProfileSerializer
 
-BASE_URL = f"http://{settings.API_HOST}:8000"
-
 
 @extend_schema(
     tags=["/users"],
@@ -113,8 +111,7 @@ def kakao_callback(request):
         if social_user.provider != 'kakao':
             return JsonResponse({'err_msg': 'no matching social type'}, status=status.HTTP_400_BAD_REQUEST)
         data = {'access_token': access_token, 'code': code}
-        accept = requests.post(
-            f"{BASE_URL}/users/login/finish/", data=data)
+        accept = requests.post(settings.KAKAO_FINISH_URL, data=data)
         accept_status = accept.status_code
         accept.close()
         if accept_status != 200:
@@ -123,8 +120,7 @@ def kakao_callback(request):
         return JsonResponse(accept_json)
     except User.DoesNotExist:
         data = {'access_token': access_token, 'code': code}
-        accept = requests.post(
-            f"{BASE_URL}/users/login/finish/", data=data)
+        accept = requests.post(settings.KAKAO_FINISH_URL, data=data)
         accept_status = accept.status_code
         if accept_status != 200:
             return JsonResponse({'err_msg': 'failed to signup'}, status=accept_status)
