@@ -18,6 +18,7 @@ services:
       - MYSQL_ROOT_USER=${DB_ROOT_USER}
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
       - TZ=${TZ}
+    restart: on-failure
   # WAS
   api:
     container_name: api
@@ -44,6 +45,7 @@ services:
     env_file: .env
     depends_on:
       - db
+    restart: on-failure
   # Reverse Proxy
   nginx:
     container_name: nginx
@@ -62,3 +64,4 @@ services:
       - "80:80" # http
     depends_on:
       - api
+    restart: on-failure
